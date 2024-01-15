@@ -7,6 +7,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'fire
 import app from '../../firebase/app';
 import APIapp from '../../components/APIapp/APIapp';
 import { getCookie } from '../../utils/api';
+import {useNavigate} from 'react-router-dom'
 
 const validationSchema = yup.object().shape({
     title: yup.string().required('Số điện thoại không được bỏ trống'),
@@ -26,6 +27,7 @@ const validateDistrict = yup.object().shape({
 
 function CreatePost (){
     const selectRef = useRef({});
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         "userId": 0,
@@ -347,6 +349,7 @@ function CreatePost (){
             await Promise.all([validateProvince.validate(province, {abortEarly: false}),validateDistrict.validate(district, {abortEarly: false}),validationSchema.validate(formData, { abortEarly: false })])
             const res = await APIapp.post('/posts', formData)
             console.log('Dữ liệu hợp lệ:', formData);
+            navigate(`/post/${res.data.id}`)
           } catch (validationErrors) {
             // Nếu có lỗi validate, cập nhật errors state với thông tin lỗi
             window.scrollTo({ top: 0, behavior: 'smooth' });
